@@ -12,23 +12,35 @@ export class User extends Entity {
     type: 'string',
     required: true,
   })
+  uuid: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
   name: string;
 
   @property({
-    type: 'number',
+    type: 'string',
     required: true,
+  })
+  email: string;
+
+  @property({
+    type: 'number',
+    required: false,
   })
   phone: number;
 
   @property({
     type: 'number',
-    required: true,
+    required: false,
   })
   sex: number;
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   engine: string;
 
