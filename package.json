@@ -34,7 +34,20 @@
   "repository": {
     "type": "git"
   },
-  "author": "",
+  "author": {
+    "name": "Chilaquil.io",
+    "url": "https://github.com/chilaquil-io/aventapp-api"
+  },
+  "contributors": [
+    {
+      "name": "Jorge Pintor <Colorman>",
+      "email": "pintorjorge.52@gmail.com",
+      "url": "https://pintorjorge.com.mx/"
+    },
+    {
+      "name": "Malcam"
+    }
+  ],
   "license": "",
   "files": [
     "README.md",
