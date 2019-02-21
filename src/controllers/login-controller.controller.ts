@@ -7,6 +7,7 @@ import {
   WhereBuilder,
   FilterBuilder,
 } from '@loopback/repository';
+import { inject } from '@loopback/context';
 import {
   post,
   param,
@@ -14,13 +15,20 @@ import {
   getWhereSchemaFor,
   requestBody,
 } from '@loopback/rest';
+import {
+  AuthenticationBindings,
+  UserProfile,
+  authenticate,
+} from '@loopback/authentication';
+
 import { User } from '../models';
 import { UserRepository } from '../repositories';
-import {OAuth2Client} from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 
 export class LoginControllerController {
-  constructor(@repository(UserRepository) public userRepository: UserRepository) {
-
+  constructor(
+    @inject(AuthenticationBindings.CURRENT_USER) private user: UserProfile,
+    @repository(UserRepository) public userRepository: UserRepository) {
   }
 
   @post('/auth')
@@ -84,12 +92,12 @@ export class LoginControllerController {
     payload = ticket.getPayload();
     let userid = null;
 
-    if( payload ) {
+    if (payload) {
       userid = payload['sub'];
 
       let myNewUser = new User();
       myNewUser.uuid = userid;
-      myNewUser.name  =  payload.name as string;
+      myNewUser.name = payload.name as string;
       myNewUser.email = payload.email as string;
 
       this.userRepository.create(myNewUser);

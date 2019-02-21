@@ -16,20 +16,26 @@ import {
   del,
   requestBody,
 } from '@loopback/rest';
-import {User} from '../models';
-import {UserRepository} from '../repositories';
+import { inject } from '@loopback/context';
+import {
+  AuthenticationBindings,
+  UserProfile,
+  authenticate,
+} from '@loopback/authentication';
+import { User } from '../models';
+import { UserRepository } from '../repositories';
 
 export class UserController {
   constructor(
-    @repository(UserRepository)
-    public userRepository : UserRepository,
-  ) {}
+    @inject(AuthenticationBindings.CURRENT_USER) private user: UserProfile,
+    @repository(UserRepository) public userRepository: UserRepository,
+  ) { }
 
   @post('/users', {
     responses: {
       '200': {
         description: 'User model instance',
-        content: {'application/json': {schema: {'x-ts-type': User}}},
+        content: { 'application/json': { schema: { 'x-ts-type': User } } },
       },
     },
   })
@@ -41,7 +47,7 @@ export class UserController {
     responses: {
       '200': {
         description: 'User model count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -51,13 +57,14 @@ export class UserController {
     return await this.userRepository.count(where);
   }
 
+  @authenticate('BasicStrategy')
   @get('/users', {
     responses: {
       '200': {
         description: 'Array of User model instances',
         content: {
           'application/json': {
-            schema: {type: 'array', items: {'x-ts-type': User}},
+            schema: { type: 'array', items: { 'x-ts-type': User } },
           },
         },
       },
@@ -73,7 +80,7 @@ export class UserController {
     responses: {
       '200': {
         description: 'User PATCH success count',
-        content: {'application/json': {schema: CountSchema}},
+        content: { 'application/json': { schema: CountSchema } },
       },
     },
   })
@@ -88,7 +95,7 @@ export class UserController {
     responses: {
       '200': {
         description: 'User model instance',
-        content: {'application/json': {schema: {'x-ts-type': User}}},
+        content: { 'application/json': { schema: { 'x-ts-type': User } } },
       },
     },
   })
