@@ -1,3 +1,6 @@
+import {
+  repository
+} from '@loopback/repository';
 import { Provider, inject, ValueOrPromise } from '@loopback/context';
 import { Strategy } from 'passport';
 import {
@@ -5,13 +8,16 @@ import {
   AuthenticationMetadata,
   UserProfile,
 } from '@loopback/authentication';
+import { HttpErrors } from '@loopback/rest';
 import { BasicStrategy } from 'passport-http';
+
+import { UserRepository } from '../repositories';
 
 export class AuthStrategyProvider implements Provider<Strategy | undefined> {
   constructor(
     @inject(AuthenticationBindings.METADATA)
     private metadata: AuthenticationMetadata,
-  ) { }
+    @repository(UserRepository) public userRepository: UserRepository) { }
 
   value(): ValueOrPromise<Strategy | undefined> {
     // The function was not decorated, so we shouldn't attempt authentication
@@ -27,13 +33,34 @@ export class AuthStrategyProvider implements Provider<Strategy | undefined> {
     }
   }
 
-  verify(username: string, password: string, cb: (err: Error | null, user?: UserProfile | false) => void, ) {
+  verify(username: string, password: string, cb: (err: Error | null, user?: UserProfile | false) => void) {
     // find user by name & password
     // call cb(null, false) when user not found
     // call cb(null, user) when user is authenticated
-    cb(null, false);
+    // const foundUser = await this.userRepository.findOne({
+    //   where: { email: username },
+    // });
+
+    const foundUser = {
+      id: "1",
+      uuid: "rx"
+    }
+
+    cb(null, foundUser); return;
+
+    if (!foundUser) {
+      cb(null, false);
+    } else {
+      cb(null, foundUser);
+    }
+
+    // const passwordMatched = await this.passwordHasher.comparePassword(
+    //   credentials.password,
+    //   foundUser.password,
+    // );
+
+    // if (!passwordMatched) {
+    //   throw new HttpErrors.Unauthorized('The credentials are not correct.');
+    // }
   }
-  id: string;
-  name?: string;
-  email?: string;
 }
